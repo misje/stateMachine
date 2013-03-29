@@ -6,6 +6,7 @@
  * "ha\n" and "hi\n". If an unrecognised character is read, a group state will
  * handle this by printing a message and returning to the idle state.
  *
+ *                    group state
  * +----------------------------------------------+
  * |  +------+  'h'  +---+  'a'  +---+  '\n'      |
  * |  | idle | ----> | h | ----> | a | ---------+ |
