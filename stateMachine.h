@@ -285,7 +285,7 @@ struct stateMachine
  *
  * \param stateMachine the state machine to initalise.
  * \param initialState the initial state of the state machine.
- * \param errorState pointer to a state that acts a final state and notifys.
+ * \param errorState pointer to a state that acts a final state and notifys
  * the system/user that an eror has occurred.
  */
 void stateM_init( struct stateMachine *stateMachine,
