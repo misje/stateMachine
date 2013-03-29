@@ -38,8 +38,13 @@ static void printExitMsg( void *stateData, struct event *event );
 static void printHiMsg( void *stateData, struct event *event );
 static void printHaMsg( void *stateData, struct event *event );
 
-/* "Forward declaration" of a state: */
-static struct state idleState;
+/* Forward declaration of states so that they can be defined in an logical
+ * order: */
+static struct state checkCharsGroupState,
+                    idleState,
+                    hState,
+                    iState,
+                    aState;
 
 /* All the following states (apart from the error state) are children of this
  * group state. This way, any unrecognised character will be handled by this
@@ -59,15 +64,18 @@ static struct state checkCharsGroupState = {
    .exitAction = &printExitMsg,
 };
 
-static struct state iState = { &checkCharsGroupState, NULL,
-   (struct transition[]){
-      { Event_keyboard, (void *)(intptr_t)'\n', &compareKeyboardChar, NULL,
-         &idleState } }, 1, "I", &printHiMsg , &printExitMsg };
-
-static struct state aState = { &checkCharsGroupState, NULL,
-   (struct transition[]){
-      { Event_keyboard, (void *)(intptr_t)'\n', &compareKeyboardChar, NULL,
-         &idleState } }, 1, "A", &printHaMsg, &printExitMsg };
+static struct state idleState = {
+   .parentState = &checkCharsGroupState,
+   .entryState = NULL,
+   .transitions = (struct transition[]){
+      { Event_keyboard, (void *)(intptr_t)'h', &compareKeyboardChar, NULL,
+         &hState },
+   },
+   .numTransitions = 1,
+   .data = "idle",
+   .entryAction = &printEnterMsg,
+   .exitAction = &printExitMsg,
+};
 
 static struct state hState = {
    .parentState = &checkCharsGroupState,
@@ -84,21 +92,19 @@ static struct state hState = {
    .exitAction = &printExitMsg,
 };
 
-static struct state idleState = {
-   .parentState = &checkCharsGroupState,
-   .entryState = NULL,
-   .transitions = (struct transition[]){
-      { Event_keyboard, (void *)(intptr_t)'h', &compareKeyboardChar, NULL,
-         &hState },
-   },
-   .numTransitions = 1,
-   .data = "idle",
-   .entryAction = &printEnterMsg,
-   .exitAction = &printExitMsg,
-};
+static struct state iState = { &checkCharsGroupState, NULL,
+   (struct transition[]){
+      { Event_keyboard, (void *)(intptr_t)'\n', &compareKeyboardChar, NULL,
+         &idleState } }, 1, "I", &printHiMsg , &printExitMsg };
+
+static struct state aState = { &checkCharsGroupState, NULL,
+   (struct transition[]){
+      { Event_keyboard, (void *)(intptr_t)'\n', &compareKeyboardChar, NULL,
+         &idleState } }, 1, "A", &printHaMsg, &printExitMsg };
 
 static struct state errorState = { NULL, NULL, NULL, 0, NULL, &printErrMsg,
    NULL };
+
 
 int main()
 {
