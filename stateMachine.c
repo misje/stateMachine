@@ -108,8 +108,7 @@ static struct state *goToNextState( struct stateMachine *fsm,
       /* A transition for the given event has been found: */
       if ( t->eventType == event->type )
       {
-         /* If the transition is guarded, abort if condition is not held:
-          * */
+         /* If the transition is guarded, abort if condition is not held: */
          if ( t->guard && !t->guard( t->condition, event ) )
             continue;
          else
