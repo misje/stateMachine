@@ -40,7 +40,7 @@ struct event
 struct state;
 
 /**
- * \brief Transition between a state and another
+ * \brief Transition between a state and another state
  *
  * All states that are not final must have at least one transition.
  * Transitions are triggered by events. If a state has more than one
@@ -48,6 +48,10 @@ struct state;
  * transition in the array will be run. A transition may optionally run a
  * function #action, which will have the triggering event passed to it as an
  * argument.
+ *
+ * It is perfectly valid for a transition to return to the state it belongs
+ * to. Such a transition will not call the state's #state::entryAction or
+ * #state::exitAction.
  *
  * ### Examples ###
  * - An ungarded transition to a state with no action performed:
@@ -138,7 +142,8 @@ struct transition
  * #transitions in the current state acts on an event. An optional \ref
  * #exitAction "exit action" is called when the state is left, and an \ref
  * #entryAction "entry action" is called when the state machine enters a new
- * state.
+ * state. If a state returns to itself, neither its #exitAction nor
+ * #entryAction will be called.
  *
  * States may be organised in a hierarchy by setting \ref #parentState
  * "parent states". When a group/parent state is entered, the state machine is
@@ -235,12 +240,19 @@ struct state
     * \brief This function is called whenever the state is being entered. May
     * be NULL.
     *
+    * \note If a state returns to itself through a transition (either directly
+    * or through a parent/group sate), its #entryAction will not be called.
+    *
     * \param stateData the state's #data will be passed.
     * \param event the event that triggered a transition will be passed.
     */
    void ( *entryAction )( void *stateData, struct event *event );
    /**
-    * \brief This function is called whenever the state is being left. May be NULL
+    * \brief This function is called whenever the state is being left. May be
+    * NULL
+    *
+    * \note If a state returns to itself through a transition (either directly
+    * or through a parent/group sate), its #exitAction will not be called.
     *
     * \param stateData the state's #data will be passed.
     * \param event the event that triggered a transition will be passed.

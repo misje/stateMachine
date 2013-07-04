@@ -35,6 +35,11 @@ int stateM_handleEvent( struct stateMachine *fsm,
       if ( fsm->currentState == fsm->errorState )
          return stateM_errorStateReached;
 
+      /* If the state returned to itself, exit and do not call state's entry
+       * action: */
+      if ( nextState == fsm->currentState )
+         return stateM_noStateChange;
+
       /* If there were no transitions for the given event for the current
        * state, check if there are any transitions for any of the parent
        * states (if any): */
@@ -108,12 +113,14 @@ static struct state *goToNextState( struct stateMachine *fsm,
       /* A transition for the given event has been found: */
       if ( t->eventType == event->type )
       {
-         /* If the transition is guarded, abort if condition is not held: */
+         /* If the transition is guarded, skip if condition is not held: */
          if ( t->guard && !t->guard( t->condition, event ) )
             continue;
          else
          {
-            if ( state->exitAction )
+            /* Run exit action only if the current state is left (only if it
+             * does not return to itself): */
+            if ( t->nextState != state && state->exitAction )
                state->exitAction( state->data, event );
 
             /* Run transition action (if any): */
