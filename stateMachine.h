@@ -142,8 +142,8 @@ struct transition
  * #transitions in the current state acts on an event. An optional \ref
  * #exitAction "exit action" is called when the state is left, and an \ref
  * #entryAction "entry action" is called when the state machine enters a new
- * state. If a state returns to itself, neither its #exitAction nor
- * #entryAction will be called.
+ * state. If a state returns to itself, neither #exitAction nor #entryAction
+ * will be called.
  *
  * States may be organised in a hierarchy by setting \ref #parentState
  * "parent states". When a group/parent state is entered, the state machine is
