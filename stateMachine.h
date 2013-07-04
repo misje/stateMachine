@@ -320,6 +320,8 @@ enum stateM_handleEventRetVals
    stateM_errorStateReached,
    /** \brief The current state changed into a non-final state */
    stateM_stateChanged,
+   /** \brief The state changed back to itself */
+   stateM_stateLoopSelf,
    /** \brief The current state did not change on the given event
     *
     * If any event passed to the state machine should result in a state

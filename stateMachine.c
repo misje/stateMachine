@@ -38,7 +38,7 @@ int stateM_handleEvent( struct stateMachine *fsm,
       /* If the state returned to itself, exit and do not call state's entry
        * action: */
       if ( nextState == fsm->currentState )
-         return stateM_noStateChange;
+         return stateM_stateLoopSelf;
 
       /* If there were no transitions for the given event for the current
        * state, check if there are any transitions for any of the parent
