@@ -21,7 +21,9 @@
 
 /* This simple example checks keyboad input against the two allowed strings
  * "ha\n" and "hi\n". If an unrecognised character is read, a group state will
- * handle this by printing a message and returning to the idle state.
+ * handle this by printing a message and returning to the idle state. If the
+ * character '!' is encountered, a "reset" message is printed, and the group
+ * state's entry state will be entered (the idle state). 
  *
  *                   print 'reset'
  *      o       +---------------------+
@@ -64,11 +66,7 @@ static void printExitMsg( void *stateData, struct event *event );
 
 /* Forward declaration of states so that they can be defined in an logical
  * order: */
-static struct state checkCharsGroupState,
-                    idleState,
-                    hState,
-                    iState,
-                    aState;
+static struct state checkCharsGroupState, idleState, hState, iState, aState;
 
 /* All the following states (apart from the error state) are children of this
  * group state. This way, any unrecognised character will be handled by this
@@ -120,19 +118,35 @@ static struct state hState = {
    .exitAction = &printExitMsg,
 };
 
-static struct state iState = { &checkCharsGroupState, NULL,
-   (struct transition[]){
+static struct state iState = {
+   .parentState = &checkCharsGroupState,
+   .entryState = NULL,
+   .transitions = (struct transition[]){
       { Event_keyboard, (void *)(intptr_t)'\n', &compareKeyboardChar,
-         &printHiMsg, &idleState } }, 1, "I", &printRecognisedChar,
-   &printExitMsg };
+         &printHiMsg, &idleState }
+   },
+   .numTransitions = 1,
+   .data = "I",
+   .entryAction = &printRecognisedChar,
+   .exitAction = &printExitMsg,
+};
 
-static struct state aState = { &checkCharsGroupState, NULL,
-   (struct transition[]){
+static struct state aState = {
+   .parentState = &checkCharsGroupState,
+   .entryState = NULL,
+   .transitions = (struct transition[]){
       { Event_keyboard, (void *)(intptr_t)'\n', &compareKeyboardChar,
-         &printHaMsg, &idleState } }, 1, "A", &printRecognisedChar,
-   &printExitMsg };
+         &printHaMsg, &idleState }
+   },
+   .numTransitions = 1,
+   .data = "A",
+   .entryAction = &printRecognisedChar,
+   .exitAction = &printExitMsg
+};
 
-static struct state errorState = { .entryAction = &printErrMsg };
+static struct state errorState = {
+   .entryAction = &printErrMsg
+};
 
 
 int main()
