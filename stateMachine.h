@@ -16,6 +16,21 @@
  */
 
 /**
+ * \defgroup stateMachine State machine
+ *
+ * \author Andreas Misje
+ * \date 27.03.13
+ *
+ * \brief Finite state machine
+ *
+ * A finite state machine implementation that supports nested states, guard
+ * conditions and entry/exit routines. No static variables are used, making it
+ * possible to run numerous instances of the state machine. No heap allocation
+ * is performed; all data is given as pointers to the module and can be stored
+ * either on the stack or the heap.
+ */
+
+/**
  * \addtogroup stateMachine
  * @{
  *
