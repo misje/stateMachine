@@ -79,6 +79,9 @@ int stateM_handleEvent( struct stateMachine *fsm,
          if ( fsm->currentState->entryAction )
             fsm->currentState->entryAction( fsm->currentState->data, event );
 
+         if ( fsm->currentState == fsm->errorState )
+            return stateM_errorStateReached;
+
          /* If the new state is a final state, notify user that the state
           * machine has stopped: */
          if ( !fsm->currentState->numTransitions )
