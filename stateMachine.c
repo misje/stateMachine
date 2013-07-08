@@ -142,7 +142,7 @@ static struct state *goToNextState( struct stateMachine *fsm,
 
             /* Run transition action (if any): */
             if ( t->action )
-               t->action( event );
+               t->action( state->data, event );
 
             state = t->nextState;
 

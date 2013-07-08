@@ -154,9 +154,10 @@ struct transition
     * The transition may optionally do some work in this function before
     * entering the next state. May be NULL.
     *
+    * \param stateData the leaving state's \ref state::data "data"
     * \param event the event passed to the state machine.
     */
-   void ( *action )( struct event *event );
+   void ( *action )( void *stateData, struct event *event );
    /**
     * \brief The next state
     *
@@ -265,7 +266,7 @@ struct state
    size_t numTransitions;
    /**
     * \brief Data that will be available for the state in its #entryAction and
-    * #exitAction.
+    * #exitAction, and in any \ref transition::action "transition action"
     */
    void *data;
    /** 
