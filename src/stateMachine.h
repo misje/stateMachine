@@ -16,6 +16,24 @@
  */
 
 /**
+ * \mainpage %stateMachine
+ *
+ * %stateMachine is a feature-rich, yet simple, finite state machine
+ * implementation. It supports grouped states, guarded transitions, events
+ * with payload, entry and exit actions, transition actions and access to
+ * user-defined state data from all actions.
+ *
+ * The user must build the state machine by linking together states and
+ * transitions arrays with pointers. A pointer to an initial state and an
+ * error state is given to stateM_init() to initialise a state machine object.
+ * The state machine is run by passing events to it with the function
+ * stateM_handleEvent(). The return value of stateM_handleEvent() will
+ * give an indication to what has happened.
+ *
+ * \image html stateMachine.svg "Illustrating a stateMachine"
+ */
+
+/**
  * \defgroup stateMachine State machine
  *
  * \author Andreas Misje
@@ -74,16 +92,19 @@ struct state;
 /**
  * \brief Transition between a state and another state
  *
- * All states that are not final must have at least one transition.
- * Transitions are triggered by events. If a state has more than one
- * transition with the same type of event (and the same condition), the first
- * transition in the array will be run. A transition may optionally run a
- * function #action, which will have the triggering event passed to it as an
- * argument.
+ * All states that are not final must have at least one transition. The
+ * transition may be guarded or not. Transitions are triggered by events. If
+ * a state has more than one transition with the same type of event (and the
+ * same condition), the first transition in the array will be run. An
+ * unconditional transition placed last in the transition array of a state can
+ * act as a "catch-all" if the event is not let through by guards. A
+ * transition may optionally run an #action, which will have the triggering
+ * event passed to it as an argument, along with the state \ref state::data
+ * "data".
  *
  * It is perfectly valid for a transition to return to the state it belongs
- * to. Such a transition will not call the state's #state::entryAction or
- * #state::exitAction.
+ * to. Such a transition will not call the state's \ref state::entryAction
+ * "entryAction" or \ref state::exitAction "exitAction".
  *
  * ### Examples ###
  * - An ungarded transition to a state with no action performed:

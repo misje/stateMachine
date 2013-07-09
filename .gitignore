@@ -2,4 +2,4 @@
 *.o
 tags
 cscope.out
-doc
+doc/output
