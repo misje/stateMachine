@@ -24,7 +24,7 @@
 
 static void goToErrorState( struct stateMachine *stateMachine,
       struct event *const event );
-static struct state *goToNextState( struct stateMachine *stateMachine,
+static struct transition *getTransition( struct stateMachine *stateMachine,
       struct state *state, struct event *const event );
 
 void stateM_init( struct stateMachine *fsm,
@@ -50,50 +50,68 @@ int stateM_handleEvent( struct stateMachine *fsm,
       return stateM_errorStateReached;
    }
 
-   struct state *parentState, *nextState = fsm->currentState;
-   do {
-      parentState = nextState->parentState;
-      nextState = goToNextState( fsm, nextState, event );
-      if ( fsm->currentState == fsm->errorState )
-         return stateM_errorStateReached;
+   if ( !fsm->currentState->numTransitions )
+      return stateM_noStateChange;
 
-      /* If the state returned to itself, exit and do not call state's entry
-       * action: */
-      if ( nextState == fsm->currentState )
-         return stateM_stateLoopSelf;
+   struct state *nextState = fsm->currentState;
+   do {
+      struct transition *transition = getTransition( fsm, nextState, event );
 
       /* If there were no transitions for the given event for the current
        * state, check if there are any transitions for any of the parent
        * states (if any): */
-      if ( !nextState )
-         nextState = parentState;
-      else
+      if ( !transition )
       {
-         fsm->previousState = fsm->currentState;
-         fsm->currentState = nextState;
-
-         /* If the new state is a parent state, enter its entry state (if it
-          * has one): */
-         if ( fsm->currentState->entryState )
-         {
-            fsm->previousState = fsm->currentState;
-            fsm->currentState = fsm->currentState->entryState;
-         }
-
-         /* Call the new state's entry action if it has any: */
-         if ( fsm->currentState->entryAction )
-            fsm->currentState->entryAction( fsm->currentState->data, event );
-
-         if ( fsm->currentState == fsm->errorState )
-            return stateM_errorStateReached;
-
-         /* If the new state is a final state, notify user that the state
-          * machine has stopped: */
-         if ( !fsm->currentState->numTransitions )
-            return stateM_finalStateReached;
-
-         return stateM_stateChanged;
+         nextState = nextState->parentState;
+         continue;
       }
+
+      /* A transition must have a next state defined. If the user has not
+       * defined the next state, go to error state: */
+      if ( !transition->nextState )
+      {
+         goToErrorState( fsm, event );
+         return stateM_errorStateReached;
+      }
+
+      nextState = transition->nextState;
+
+      /* If the new state is a parent state, enter its entry state (if it has
+       * one). Step down through the whole family tree until a state without
+       * an entry state is found: */
+      while ( nextState->entryState )
+         nextState = nextState->entryState;
+
+      /* Run exit action only if the current state is left (only if it does
+       * not return to itself): */
+      if ( nextState != fsm->currentState && fsm->currentState->exitAction )
+         fsm->currentState->exitAction( fsm->currentState->data, event );
+
+      /* Run transition action (if any): */
+      if ( transition->action )
+         transition->action( fsm->currentState->data, event );
+
+      /* Call the new state's entry action if it has any (only if state does
+       * not return to itself): */
+      if ( nextState != fsm->currentState && nextState->entryAction )
+         nextState->entryAction( nextState->data, event );
+
+      fsm->previousState = fsm->currentState;
+      fsm->currentState = nextState;
+      
+      /* If the state returned to itself: */
+      if ( fsm->currentState == fsm->previousState )
+         return stateM_stateLoopSelf;
+
+      if ( fsm->currentState == fsm->errorState )
+         return stateM_errorStateReached;
+
+      /* If the new state is a final state, notify user that the state
+       * machine has stopped: */
+      if ( !fsm->currentState->numTransitions )
+         return stateM_finalStateReached;
+
+      return stateM_stateChanged;
    } while ( nextState );
 
    return stateM_noStateChange;
@@ -126,7 +144,7 @@ static void goToErrorState( struct stateMachine *fsm,
       fsm->currentState->entryAction( fsm->currentState->data, event );
 }
 
-static struct state *goToNextState( struct stateMachine *fsm,
+static struct transition *getTransition( struct stateMachine *fsm,
       struct state *state, struct event *const event )
 {
    size_t i;
@@ -138,29 +156,11 @@ static struct state *goToNextState( struct stateMachine *fsm,
       /* A transition for the given event has been found: */
       if ( t->eventType == event->type )
       {
-         /* If the transition is guarded, skip if condition is not held: */
-         if ( t->guard && !t->guard( t->condition, event ) )
-            continue;
-         else
-         {
-            /* Run exit action only if the current state is left (only if it
-             * does not return to itself): */
-            if ( t->nextState != state && state->exitAction )
-               state->exitAction( state->data, event );
-
-            /* Run transition action (if any): */
-            if ( t->action )
-               t->action( state->data, event );
-
-            state = t->nextState;
-
-            /* A transition must have defined a next state. If the user has
-             * not defined the next state, go to error state: */
-            if ( !state )
-               goToErrorState( fsm, event );
-
-            return state;
-         }
+         if ( !t->guard )
+            return t;
+         /* If transition is guarded, ensure that the condition is held: */
+         else if ( t->guard( t->condition, event ) )
+            return t;
       }
    }
 

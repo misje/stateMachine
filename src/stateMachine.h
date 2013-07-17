@@ -206,12 +206,12 @@ struct transition
  *
  * States may be organised in a hierarchy by setting \ref #parentState
  * "parent states". When a group/parent state is entered, the state machine is
- * redirected to the group state's \ref #entryState "entry state". If an event
- * does not trigger a transition in a state and if the state has a defined
- * parent state, the event will be passed to the parent state. Thus all
- * children of a state have a set of common #transitions. A parent state's
- * #entryAction will not be called if an event is passed on from a child
- * state. 
+ * redirected to the group state's \ref #entryState "entry state" (if
+ * non-NULL). If an event does not trigger a transition in a state and if the
+ * state has a parent state, the event will be passed to the parent state.
+ * This behaviour is repeated for all parents. Thus all children of a state
+ * have a set of common #transitions. A parent state's #entryAction will not
+ * be called if an event is passed on to a child state. 
  *
  * The following lists the different types of states that may be created, and
  * how to create them:
@@ -246,11 +246,18 @@ struct transition
  * ~~~
  * If there are any transitions in the state machine that lead to a group
  * state, it makes sense to define an entry state in the group. This can be
- * done by using #entryState, but it is not mandatory.
+ * done by using #entryState, but it is not mandatory. If the #entryState
+ * state has children, the chain of children will be traversed until a child
+ * with its #entryState set to NULL is found.
  *
  * \note If #entryState is defined for a group state, the group state's
- * #entryAction will not be called (the state pointed to by #entryState,
- * however, will have its #entryAction called).
+ * #entryAction will not be called (the state pointed to by #entryState (after
+ * following the chain of children), however, will have its #entryAction
+ * called).
+ *
+ * \warning The state machine cannot detect cycles in parent chains and
+ * children chains. If such cycles are present, stateM_handleEvent() will
+ * never finish due to never-ending loops.
  *
  * ### Final state ###
  * A final state is a state that terminates the state machine. A state is
@@ -261,12 +268,8 @@ struct transition
  *    .numTransitions = 0,
  * ~~~
  * The error state used by the state machine to indicate errors should be a
- * final state.
- *
- * Final states must have #numTransitions set to 0.
- *
- * \note A state can only be a parent or a child (only #parentState or
- * #entryState, but not both, can be defined at a time).
+ * final state. Any calls to stateM_handleEvent() when the current state is a
+ * final state will return #stateM_noStateChange.
  *
  * \sa event
  * \sa transition
@@ -396,8 +399,14 @@ enum stateM_handleEventRetVals
  *
  * The event will be passed to the current state, and possibly to the current
  * state's parent states (if any). If the event triggers a transition, a new
- * state will be entered. If the new state has an entryAction defined, it will
- * be called.
+ * state will be entered. If the transition has an \ref transition::action
+ * "action" defined, it will be called. If the transition is to a state other
+ * than the current state, the current state's \ref state::exitAction
+ * "exit action" is called (if defined). Likewise, if the state is a new
+ * state, the new state's \ref state::entryAction "entry action" is called (if
+ * defined).
+ *
+ * The returned value is negative if an error occurs.
  *
  * \param stateMachine the state machine to pass an event to.
  * \param event the event to be handled.
