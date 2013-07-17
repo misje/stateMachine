@@ -61,10 +61,14 @@ enum eventType {
 static bool compareKeyboardChar( void *ch, struct event *event );
 
 static void printRecognisedChar( void *stateData, struct event *event );
-static void printUnrecognisedChar( void *stateData, struct event *event );
-static void printReset( void *stateData, struct event *event );
-static void printHiMsg( void *stateData, struct event *event );
-static void printHaMsg( void *stateData, struct event *event );
+static void printUnrecognisedChar( void *oldStateData, struct event *event,
+      void *newStateData );
+static void printReset( void *oldStateData, struct event *event,
+      void *newStateData );
+static void printHiMsg( void *oldStateData, struct event *event,
+      void *newStateData );
+static void printHaMsg( void *oldStateData, struct event *event,
+      void *newStateData );
 static void printErrMsg( void *stateData, struct event *event );
 static void printEnterMsg( void *stateData, struct event *event );
 static void printExitMsg( void *stateData, struct event *event );
@@ -181,23 +185,27 @@ static void printRecognisedChar( void *stateData, struct event *event )
    printf( "parsed: %c\n", (char)(intptr_t)event->data );
 }
 
-static void printUnrecognisedChar( void *stateData, struct event *event )
+static void printUnrecognisedChar( void *oldStateData, struct event *event,
+      void *newStateData )
 {
    printf( "unrecognised character: %c\n",
          (char)(intptr_t)event->data );
 }
 
-static void printReset( void *stateData, struct event *event )
+static void printReset( void *oldStateData, struct event *event,
+      void *newStateData )
 {
    puts( "Resetting" );
 }
 
-static void printHiMsg( void *stateData, struct event *event )
+static void printHiMsg( void *oldStateData, struct event *event,
+      void *newStateData )
 {
    puts( "Hi!" );
 }
 
-static void printHaMsg( void *stateData, struct event *event )
+static void printHaMsg( void *oldStateData, struct event *event,
+      void *newStateData )
 {
    puts( "Ha-ha" );
 }

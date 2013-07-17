@@ -89,7 +89,8 @@ int stateM_handleEvent( struct stateMachine *fsm,
 
       /* Run transition action (if any): */
       if ( transition->action )
-         transition->action( fsm->currentState->data, event );
+         transition->action( fsm->currentState->data, event, nextState->
+               data );
 
       /* Call the new state's entry action if it has any (only if state does
        * not return to itself): */

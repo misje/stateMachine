@@ -180,10 +180,14 @@ struct transition
     * The transition may optionally do some work in this function before
     * entering the next state. May be NULL.
     *
-    * \param stateData the leaving state's \ref state::data "data"
+    * \param currentStateData the leaving state's \ref state::data "data"
     * \param event the event passed to the state machine.
+    * \param newStateData the new state's (the \ref state::entryState
+    * "entryState" of any (chain of) parent states, not the parent state
+    * itself) \ref state::data "data"
     */
-   void ( *action )( void *stateData, struct event *event );
+   void ( *action )( void *currentStateData, struct event *event,
+         void *newStateData );
    /**
     * \brief The next state
     *
