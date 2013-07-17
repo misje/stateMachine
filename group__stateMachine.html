@@ -124,9 +124,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ga1633db5849b6b1a9837227a5aa754008"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__stateMachine.html#ga1633db5849b6b1a9837227a5aa754008">stateM_handleEvent</a> (struct <a class="el" href="group__stateMachine.html#structstateMachine">stateMachine</a> *<a class="el" href="group__stateMachine.html#structstateMachine">stateMachine</a>, struct <a class="el" href="group__stateMachine.html#structevent">event</a> *<a class="el" href="group__stateMachine.html#structevent">event</a>)</td></tr>
 <tr class="memdesc:ga1633db5849b6b1a9837227a5aa754008"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pass an event to the state machine.  <a href="#ga1633db5849b6b1a9837227a5aa754008"></a><br/></td></tr>
 <tr class="memitem:gaadc6e6142388ca355332a87f7377e792"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structstate.html">state</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__stateMachine.html#gaadc6e6142388ca355332a87f7377e792">stateM_currentState</a> (struct <a class="el" href="group__stateMachine.html#structstateMachine">stateMachine</a> *<a class="el" href="group__stateMachine.html#structstateMachine">stateMachine</a>)</td></tr>
-<tr class="memdesc:gaadc6e6142388ca355332a87f7377e792"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current state.  <a href="#gaadc6e6142388ca355332a87f7377e792"></a><br/></td></tr>
+<tr class="memdesc:gaadc6e6142388ca355332a87f7377e792"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current state.  <a href="#gaadc6e6142388ca355332a87f7377e792"></a><br/></td></tr>
 <tr class="memitem:ga340ddc8d4b1e915d7cdfa815542ef56c"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structstate.html">state</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__stateMachine.html#ga340ddc8d4b1e915d7cdfa815542ef56c">stateM_previousState</a> (struct <a class="el" href="group__stateMachine.html#structstateMachine">stateMachine</a> *<a class="el" href="group__stateMachine.html#structstateMachine">stateMachine</a>)</td></tr>
-<tr class="memdesc:ga340ddc8d4b1e915d7cdfa815542ef56c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The previous state.  <a href="#ga340ddc8d4b1e915d7cdfa815542ef56c"></a><br/></td></tr>
+<tr class="memdesc:ga340ddc8d4b1e915d7cdfa815542ef56c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the previous state.  <a href="#ga340ddc8d4b1e915d7cdfa815542ef56c"></a><br/></td></tr>
 <tr class="memitem:ga583694db4605f25c1fec5be541980790"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__stateMachine.html#ga583694db4605f25c1fec5be541980790">stateM_stopped</a> (struct <a class="el" href="group__stateMachine.html#structstateMachine">stateMachine</a> *<a class="el" href="group__stateMachine.html#structstateMachine">stateMachine</a>)</td></tr>
 <tr class="memdesc:ga583694db4605f25c1fec5be541980790"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the state machine has stopped.  <a href="#ga583694db4605f25c1fec5be541980790"></a><br/></td></tr>
 </table>
@@ -134,7 +134,7 @@ Functions</h2></td></tr>
 <p>Finite state machine. </p>
 <dl class="section author"><dt>Author</dt><dd>Andreas Misje </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>27.03.13</dd></dl>
-<p>A finite state machine implementation that supports nested states, guard conditions and entry/exit routines. No static variables are used, making it possible to run numerous instances of the state machine. No heap allocation is performed; all data is given as pointers to the module and can be stored either on the stack or the heap. </p>
+<p>A finite state machine implementation that supports nested states, guards and entry/exit routines. All state machine data is stored in separate objects, and the state machine must be built by the user. States are connected using pointers, and all data can be stored on either the stack, heap or both. </p>
 <hr/><h2>Class Documentation</h2>
 <a name="structevent" id="structevent"></a>
 <div class="memitem">
@@ -146,11 +146,11 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <div class="textblock"><p>Event. </p>
-<p>Events trigger transitions from a state to another. Event types are defined by the user. Any event may optionally contain a payload (<a class="el" href="group__stateMachine.html#a675355462c32d49a652673799ca24209">data</a>).</p>
+<p>Events trigger transitions from a state to another. Event types are defined by the user. Any event may optionally contain a <a class="el" href="group__stateMachine.html#a675355462c32d49a652673799ca24209">payload</a>.</p>
 <dl class="section see"><dt>See Also</dt><dd><a class="el" href="structstate.html" title="State.">state</a> </dd>
 <dd>
 <a class="el" href="structtransition.html" title="Transition between a state and another state.">transition</a> </dd></dl>
-<dl><dt><b>Examples: </b></dt><dd><a class="el" href="stateMachineExample_8c-example.html#_a0">stateMachineExample.c</a>.</dd>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="nestedTest_8c-example.html#_a0">nestedTest.c</a>, and <a class="el" href="stateMachineExample_8c-example.html#_a0">stateMachineExample.c</a>.</dd>
 </dl></div><table class="fieldtable">
 <tr><th colspan="3">Class Members</th></tr>
 <tr><td class="fieldtype">
@@ -158,7 +158,7 @@ Functions</h2></td></tr>
 <td class="fieldname">
 data</td>
 <td class="fielddoc">
-Event payload. How this is used is entirely up to the user. This data is always passed together with an eventType in order to make it possible to always cast the data correctly. </td></tr>
+Event payload. How this is used is entirely up to the user. This data is always passed together with <a class="el" href="group__stateMachine.html#a417bea53fe23a7939b4d3c7b1bfc61e0" title="Type of event. Defined by user.">type</a> in order to make it possible to always cast the data correctly. </td></tr>
 <tr><td class="fieldtype">
 <a class="anchor" id="a417bea53fe23a7939b4d3c7b1bfc61e0"></a>int</td>
 <td class="fieldname">
@@ -179,8 +179,8 @@ Type of event. Defined by user. </td></tr>
       </table>
 </div><div class="memdoc">
 <div class="textblock"><p>State machine. </p>
-<p>Should not be manipulated directly by user. </p>
-<dl><dt><b>Examples: </b></dt><dd><a class="el" href="stateMachineExample_8c-example.html#_a8">stateMachineExample.c</a>.</dd>
+<p>There is no need to manipulate the members directly. </p>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="nestedTest_8c-example.html#_a8">nestedTest.c</a>, and <a class="el" href="stateMachineExample_8c-example.html#_a8">stateMachineExample.c</a>.</dd>
 </dl></div><table class="fieldtable">
 <tr><th colspan="3">Class Members</th></tr>
 <tr><td class="fieldtype">
@@ -194,7 +194,7 @@ Pointer to the current state. </td></tr>
 <td class="fieldname">
 errorState</td>
 <td class="fielddoc">
-Pointer to the state which will be entered whenever an error occurs in the state machine. </td></tr>
+Pointer to a state that will be entered whenever an error occurs in the state machine. See <a class="el" href="group__stateMachine.html#ggad29739ed2b2edf3691ea54dcf9dfa7ccad4ee635c4a77b1d98ad5df550ac3a4a5" title="The error state was reached.">stateM_errorStateReached</a> for when the state machine enters the error state. </td></tr>
 <tr><td class="fieldtype">
 <a class="anchor" id="a2f945be42fc791da702f5bcf75a7e41e"></a>struct <a class="el" href="structstate.html">state</a> *</td>
 <td class="fieldname">
@@ -223,7 +223,8 @@ Pointer to previous state. The previous state is stored for convenience in case 
 </td></tr>
 <tr><td valign="top"><em><a class="anchor" id="ggad29739ed2b2edf3691ea54dcf9dfa7ccad4ee635c4a77b1d98ad5df550ac3a4a5"></a>stateM_errorStateReached</em>&nbsp;</td><td>
 <p>The error state was reached. </p>
-<p>The state machine enters the state machine if any of the following happends:</p>
+<p>This value is returned either when the state machine enters the error state itself as a result of an error, or when the error state is the next state as a result of a successful transition.</p>
+<p>The state machine enters the state machine if any of the following happens:</p>
 <ul>
 <li>The current state is NULL</li>
 <li>A transition for the current event did not define the next state </li>
@@ -234,6 +235,7 @@ Pointer to previous state. The previous state is stored for convenience in case 
 </td></tr>
 <tr><td valign="top"><em><a class="anchor" id="ggad29739ed2b2edf3691ea54dcf9dfa7cca28a37d28fb17a67e5fc74f165e7de2ce"></a>stateM_stateLoopSelf</em>&nbsp;</td><td>
 <p>The state changed back to itself. </p>
+<p>The state can return to itself either directly or indirectly. An indirect path may inlude a transition from a parent state and the use of <a class="el" href="structstate.html#ae0f1c24d8a356a7ad778d33ae2ffe6f9">entryStates</a>. </p>
 </td></tr>
 <tr><td valign="top"><em><a class="anchor" id="ggad29739ed2b2edf3691ea54dcf9dfa7cca9e6e87ab43d2a2cf031ff16b92ec8c38"></a>stateM_noStateChange</em>&nbsp;</td><td>
 <p>The current state did not change on the given event. </p>
@@ -271,7 +273,7 @@ Pointer to previous state. The previous state is stored for convenience in case 
 </table>
 </div><div class="memdoc">
 
-<p>The current state. </p>
+<p>Get the current state. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname"><a class="el" href="group__stateMachine.html#structstateMachine" title="State machine.">stateMachine</a></td><td>the state machine to get the current state from.</td></tr>
@@ -313,7 +315,8 @@ Pointer to previous state. The previous state is stored for convenience in case 
 </div><div class="memdoc">
 
 <p>Pass an event to the state machine. </p>
-<p>The event will be passed to the current state, and possibly to the current state's parent states (if any). If the event triggers a transition, a new state will be entered. If the new state has an entryAction defined, it will be called.</p>
+<p>The event will be passed to the current state, and possibly to the current state's parent states (if any). If the event triggers a transition, a new state will be entered. If the transition has an <a class="el" href="structtransition.html#a2ff83afda8cb7dd827eec91fadf19f6b">action</a> defined, it will be called. If the transition is to a state other than the current state, the current state's <a class="el" href="structstate.html#a08e403e4d5e93e3f04635baef25b10ed">exit action</a> is called (if defined). Likewise, if the state is a new state, the new state's <a class="el" href="structstate.html#afe3c84c80918f03f996c3b2b0ef4247b">entry action</a> is called (if defined).</p>
+<p>The returned value is negative if an error occurs.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname"><a class="el" href="group__stateMachine.html#structstateMachine" title="State machine.">stateMachine</a></td><td>the state machine to pass an event to. </td></tr>
@@ -322,7 +325,7 @@ Pointer to previous state. The previous state is stored for convenience in case 
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__stateMachine.html#gad29739ed2b2edf3691ea54dcf9dfa7cc" title="stateM_handleEvent() return values">stateM_handleEventRetVals</a> </dd></dl>
-<dl><dt><b>Examples: </b></dt><dd><a class="el" href="stateMachineExample_8c-example.html#a10">stateMachineExample.c</a>.</dd>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="nestedTest_8c-example.html#a10">nestedTest.c</a>, and <a class="el" href="stateMachineExample_8c-example.html#a10">stateMachineExample.c</a>.</dd>
 </dl>
 </div>
 </div>
@@ -358,16 +361,18 @@ Pointer to previous state. The previous state is stored for convenience in case 
 
 <p>Initialise the state machine. </p>
 <p>This function initialises the supplied <a class="el" href="group__stateMachine.html#structstateMachine" title="State machine.">stateMachine</a> and sets the current state to <b class="paramname">initialState</b>. No actions are performed until <a class="el" href="group__stateMachine.html#ga1633db5849b6b1a9837227a5aa754008" title="Pass an event to the state machine.">stateM_handleEvent()</a> is called. It is safe to call this function numerous times, for instance in order to reset/restart the state machine if a final state has been reached.</p>
-<dl class="section note"><dt>Note</dt><dd>The <a class="el" href="structstate.html#afe3c84c80918f03f996c3b2b0ef4247b">entry action</a> for <b class="paramname">initialState</b> will not be called.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The <a class="el" href="structstate.html#afe3c84c80918f03f996c3b2b0ef4247b">entry action</a> for <b class="paramname">initialState</b> will not be called.</dd>
+<dd>
+If <b class="paramname">initialState</b> is a parent state with its <a class="el" href="structstate.html#ae0f1c24d8a356a7ad778d33ae2ffe6f9">entryState</a> defined, it will not be entered. The user must explicitly set the initial state.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname"><a class="el" href="group__stateMachine.html#structstateMachine" title="State machine.">stateMachine</a></td><td>the state machine to initalise. </td></tr>
+    <tr><td class="paramname"><a class="el" href="group__stateMachine.html#structstateMachine" title="State machine.">stateMachine</a></td><td>the state machine to initialise. </td></tr>
     <tr><td class="paramname">initialState</td><td>the initial state of the state machine. </td></tr>
-    <tr><td class="paramname">errorState</td><td>pointer to a state that acts a final state and notifys the system/user that an eror has occurred. </td></tr>
+    <tr><td class="paramname">errorState</td><td>pointer to a state that acts a final state and notifies the system/user that an error has occurred. </td></tr>
   </table>
   </dd>
 </dl>
-<dl><dt><b>Examples: </b></dt><dd><a class="el" href="stateMachineExample_8c-example.html#a9">stateMachineExample.c</a>.</dd>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="nestedTest_8c-example.html#a9">nestedTest.c</a>, and <a class="el" href="stateMachineExample_8c-example.html#a9">stateMachineExample.c</a>.</dd>
 </dl>
 </div>
 </div>
@@ -393,7 +398,7 @@ Pointer to previous state. The previous state is stored for convenience in case 
 </table>
 </div><div class="memdoc">
 
-<p>The previous state. </p>
+<p>Get the previous state. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname"><a class="el" href="group__stateMachine.html#structstateMachine" title="State machine.">stateMachine</a></td><td>the state machine to get the previous state from.</td></tr>
@@ -445,7 +450,7 @@ Pointer to previous state. The previous state is stored for convenience in case 
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 9 2013 23:52:55 for State machine by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 17 2013 14:01:32 for State machine by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

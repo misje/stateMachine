@@ -143,10 +143,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><span class="keyword">static</span> <span class="keywordtype">bool</span> compareKeyboardChar( <span class="keywordtype">void</span> *ch, <span class="keyword">struct</span> <a name="_a0"></a><a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> );</div>
 <div class="line"></div>
 <div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printRecognisedChar( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> );</div>
-<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printUnrecognisedChar( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> );</div>
-<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printReset( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> );</div>
-<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printHiMsg( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> );</div>
-<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printHaMsg( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> );</div>
+<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printUnrecognisedChar( <span class="keywordtype">void</span> *oldStateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a>,</div>
+<div class="line">      <span class="keywordtype">void</span> *newStateData );</div>
+<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printReset( <span class="keywordtype">void</span> *oldStateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a>,</div>
+<div class="line">      <span class="keywordtype">void</span> *newStateData );</div>
+<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printHiMsg( <span class="keywordtype">void</span> *oldStateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a>,</div>
+<div class="line">      <span class="keywordtype">void</span> *newStateData );</div>
+<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printHaMsg( <span class="keywordtype">void</span> *oldStateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a>,</div>
+<div class="line">      <span class="keywordtype">void</span> *newStateData );</div>
 <div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printErrMsg( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> );</div>
 <div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printEnterMsg( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> );</div>
 <div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printExitMsg( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> <a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> *<a class="code" href="group__stateMachine.html#structevent" title="Event.">event</a> );</div>
@@ -212,7 +216,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line">      { Event_keyboard, (<span class="keywordtype">void</span> *)(intptr_t)<span class="charliteral">&#39;\n&#39;</span>, &amp;compareKeyboardChar,</div>
 <div class="line">         &amp;printHiMsg, &amp;idleState }</div>
 <div class="line">   },</div>
-<div class="line">   .<a name="a6"></a><a class="code" href="structstate.html#aaa0824f72f5ad78d17bd9ec2480fbd3a" title="Number of transitions in the array.">numTransitions</a> = 1,</div>
+<div class="line">   .<a name="a6"></a><a class="code" href="structstate.html#aaa0824f72f5ad78d17bd9ec2480fbd3a" title="Number of transitions in the transitions array.">numTransitions</a> = 1,</div>
 <div class="line">   .data = <span class="stringliteral">&quot;I&quot;</span>,</div>
 <div class="line">   .entryAction = &amp;printRecognisedChar,</div>
 <div class="line">   .exitAction = &amp;printExitMsg,</div>
@@ -225,7 +229,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line">      { Event_keyboard, (<span class="keywordtype">void</span> *)(intptr_t)<span class="charliteral">&#39;\n&#39;</span>, &amp;compareKeyboardChar,</div>
 <div class="line">         &amp;printHaMsg, &amp;idleState }</div>
 <div class="line">   },</div>
-<div class="line">   .<a class="code" href="structstate.html#aaa0824f72f5ad78d17bd9ec2480fbd3a" title="Number of transitions in the array.">numTransitions</a> = 1,</div>
+<div class="line">   .<a class="code" href="structstate.html#aaa0824f72f5ad78d17bd9ec2480fbd3a" title="Number of transitions in the transitions array.">numTransitions</a> = 1,</div>
 <div class="line">   .data = <span class="stringliteral">&quot;A&quot;</span>,</div>
 <div class="line">   .entryAction = &amp;printRecognisedChar,</div>
 <div class="line">   .exitAction = &amp;printExitMsg</div>
@@ -263,23 +267,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line">   printf( <span class="stringliteral">&quot;parsed: %c\n&quot;</span>, (<span class="keywordtype">char</span>)(intptr_t)event-&gt;<a name="a11"></a><a class="code" href="group__stateMachine.html#a675355462c32d49a652673799ca24209" title="Event payload.">data</a> );</div>
 <div class="line">}</div>
 <div class="line"></div>
-<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printUnrecognisedChar( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> event *event )</div>
+<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printUnrecognisedChar( <span class="keywordtype">void</span> *oldStateData, <span class="keyword">struct</span> event *event,</div>
+<div class="line">      <span class="keywordtype">void</span> *newStateData )</div>
 <div class="line">{</div>
 <div class="line">   printf( <span class="stringliteral">&quot;unrecognised character: %c\n&quot;</span>,</div>
 <div class="line">         (<span class="keywordtype">char</span>)(intptr_t)event-&gt;<a class="code" href="group__stateMachine.html#a675355462c32d49a652673799ca24209" title="Event payload.">data</a> );</div>
 <div class="line">}</div>
 <div class="line"></div>
-<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printReset( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> event *event )</div>
+<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printReset( <span class="keywordtype">void</span> *oldStateData, <span class="keyword">struct</span> event *event,</div>
+<div class="line">      <span class="keywordtype">void</span> *newStateData )</div>
 <div class="line">{</div>
 <div class="line">   puts( <span class="stringliteral">&quot;Resetting&quot;</span> );</div>
 <div class="line">}</div>
 <div class="line"></div>
-<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printHiMsg( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> event *event )</div>
+<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printHiMsg( <span class="keywordtype">void</span> *oldStateData, <span class="keyword">struct</span> event *event,</div>
+<div class="line">      <span class="keywordtype">void</span> *newStateData )</div>
 <div class="line">{</div>
 <div class="line">   puts( <span class="stringliteral">&quot;Hi!&quot;</span> );</div>
 <div class="line">}</div>
 <div class="line"></div>
-<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printHaMsg( <span class="keywordtype">void</span> *stateData, <span class="keyword">struct</span> event *event )</div>
+<div class="line"><span class="keyword">static</span> <span class="keywordtype">void</span> printHaMsg( <span class="keywordtype">void</span> *oldStateData, <span class="keyword">struct</span> event *event,</div>
+<div class="line">      <span class="keywordtype">void</span> *newStateData )</div>
 <div class="line">{</div>
 <div class="line">   puts( <span class="stringliteral">&quot;Ha-ha&quot;</span> );</div>
 <div class="line">}</div>
@@ -301,7 +309,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 9 2013 23:52:55 for State machine by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 17 2013 14:01:32 for State machine by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

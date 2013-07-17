@@ -104,15 +104,15 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 <tr class="memdesc:a132bff3e61c2709562ea586a18602176"><td class="mdescLeft">&#160;</td><td class="mdescRight">Condition that event must fulfil.  <a href="#a132bff3e61c2709562ea586a18602176"></a><br/></td></tr>
 <tr class="memitem:aaed7ffe8b4bb6ef95c8189331ec877ce"><td class="memItemLeft" align="right" valign="top">bool(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtransition.html#aaed7ffe8b4bb6ef95c8189331ec877ce">guard</a> )(void *<a class="el" href="structtransition.html#a132bff3e61c2709562ea586a18602176">condition</a>, struct <a class="el" href="group__stateMachine.html#structevent">event</a> *<a class="el" href="group__stateMachine.html#structevent">event</a>)</td></tr>
 <tr class="memdesc:aaed7ffe8b4bb6ef95c8189331ec877ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if data passed with event fulfils a condition.  <a href="#aaed7ffe8b4bb6ef95c8189331ec877ce"></a><br/></td></tr>
-<tr class="memitem:acfd852ae5c3f2edec2731761b7cd947b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtransition.html#acfd852ae5c3f2edec2731761b7cd947b">action</a> )(void *stateData, struct <a class="el" href="group__stateMachine.html#structevent">event</a> *<a class="el" href="group__stateMachine.html#structevent">event</a>)</td></tr>
-<tr class="memdesc:acfd852ae5c3f2edec2731761b7cd947b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function containing tasks to be performed during the transition.  <a href="#acfd852ae5c3f2edec2731761b7cd947b"></a><br/></td></tr>
+<tr class="memitem:a2ff83afda8cb7dd827eec91fadf19f6b"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtransition.html#a2ff83afda8cb7dd827eec91fadf19f6b">action</a> )(void *currentStateData, struct <a class="el" href="group__stateMachine.html#structevent">event</a> *<a class="el" href="group__stateMachine.html#structevent">event</a>, void *newStateData)</td></tr>
+<tr class="memdesc:a2ff83afda8cb7dd827eec91fadf19f6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function containing tasks to be performed during the transition.  <a href="#a2ff83afda8cb7dd827eec91fadf19f6b"></a><br/></td></tr>
 <tr class="memitem:a2c3a9da2fdb1b043a0dc33bdde4d41b4"><td class="memItemLeft" align="right" valign="top">struct <a class="el" href="structstate.html">state</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtransition.html#a2c3a9da2fdb1b043a0dc33bdde4d41b4">nextState</a></td></tr>
 <tr class="memdesc:a2c3a9da2fdb1b043a0dc33bdde4d41b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The next state.  <a href="#a2c3a9da2fdb1b043a0dc33bdde4d41b4"></a><br/></td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Transition between a state and another state. </p>
-<p>All states that are not final must have at least one transition. The transition may be guarded or not. Transitions are triggered by events. If a state has more than one transition with the same type of event (and the same condition), the first transition in the array will be run. An unconditional transition placed last in the transition array of a state can act as a "catch-all" if the event is not let through by guards. A transition may optionally run an <a class="el" href="structtransition.html#acfd852ae5c3f2edec2731761b7cd947b" title="Function containing tasks to be performed during the transition.">action</a>, which will have the triggering event passed to it as an argument, along with the state <a class="el" href="structstate.html#ac24b7cde82b081ecd942a95ffa3a97c1">data</a>.</p>
-<p>It is perfectly valid for a transition to return to the state it belongs to. Such a transition will not call the state's <a class="el" href="structstate.html#afe3c84c80918f03f996c3b2b0ef4247b">entryAction</a> or <a class="el" href="structstate.html#a08e403e4d5e93e3f04635baef25b10ed">exitAction</a>.</p>
+<p>All states that are not final must have at least one transition. The transition may be guarded or not. Transitions are triggered by events. If a state has more than one transition with the same type of event (and the same condition), the first transition in the array will be run. An unconditional transition placed last in the transition array of a state can act as a "catch-all". A transition may optionally run an <a class="el" href="structtransition.html#a2ff83afda8cb7dd827eec91fadf19f6b" title="Function containing tasks to be performed during the transition.">action</a>, which will have the triggering event passed to it as an argument, along with the current and new states' <a class="el" href="structstate.html#ac24b7cde82b081ecd942a95ffa3a97c1">data</a>.</p>
+<p>It is perfectly valid for a transition to return to the state it belongs to. Such a transition will not call the state's <a class="el" href="structstate.html#afe3c84c80918f03f996c3b2b0ef4247b">entry action</a> or <a class="el" href="structstate.html#a08e403e4d5e93e3f04635baef25b10ed">exit action</a>. If there are no transitions for the current event, the state's parent will be handed the event.</p>
 <h3>Examples</h3>
 <ul>
 <li>An ungarded transition to a state with no action performed: <div class="fragment"><div class="line">{</div>
@@ -134,20 +134,21 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 <li>A guarded transition using a condition <div class="fragment"><div class="line">{</div>
 <div class="line">   .eventType = Event_mouse,</div>
 <div class="line">   .condition = boxLimits,</div>
-<div class="line">   .guard = &amp;coordinateWithinLimits,</div>
-</div><!-- fragment --> By using <a class="el" href="structtransition.html#a132bff3e61c2709562ea586a18602176">conditions</a> a more general guard function can be used, operating on the supplied argument <a class="el" href="structtransition.html#a132bff3e61c2709562ea586a18602176" title="Condition that event must fulfil.">condition</a>. In this example, <code>coordinateWithinLimits</code> checks whether the coordinate in the mouse event is within the limits of the "box".</li>
+<div class="line">   .guard = &amp;coordinatesWithinLimits,</div>
+<div class="line">},</div>
+</div><!-- fragment --> By using <a class="el" href="structtransition.html#a132bff3e61c2709562ea586a18602176">conditions</a> a more general guard function can be used, operating on the supplied argument <a class="el" href="structtransition.html#a132bff3e61c2709562ea586a18602176" title="Condition that event must fulfil.">condition</a>. In this example, <code>coordinatesWithinLimits</code> checks whether the coordinates in the mouse event are within the limits of the "box".</li>
 </ul>
 <dl class="section see"><dt>See Also</dt><dd><a class="el" href="group__stateMachine.html#structevent" title="Event.">event</a> </dd>
 <dd>
 <a class="el" href="structstate.html" title="State.">state</a> </dd></dl>
-<dl><dt><b>Examples: </b></dt><dd><a class="el" href="stateMachineExample_8c-example.html#_a5">stateMachineExample.c</a>.</dd>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="nestedTest_8c-example.html#_a5">nestedTest.c</a>, and <a class="el" href="stateMachineExample_8c-example.html#_a5">stateMachineExample.c</a>.</dd>
 </dl></div><h2>Member Data Documentation</h2>
-<a class="anchor" id="acfd852ae5c3f2edec2731761b7cd947b"></a>
+<a class="anchor" id="a2ff83afda8cb7dd827eec91fadf19f6b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void( * transition::action)(void *stateData, struct <a class="el" href="group__stateMachine.html#structevent">event</a> *<a class="el" href="group__stateMachine.html#structevent">event</a>)</td>
+          <td class="memname">void( * transition::action)(void *currentStateData, struct <a class="el" href="group__stateMachine.html#structevent">event</a> *<a class="el" href="group__stateMachine.html#structevent">event</a>, void *newStateData)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -156,8 +157,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 <p>The transition may optionally do some work in this function before entering the next state. May be NULL.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">stateData</td><td>the leaving state's <a class="el" href="structstate.html#ac24b7cde82b081ecd942a95ffa3a97c1">data</a> </td></tr>
+    <tr><td class="paramname">currentStateData</td><td>the leaving state's <a class="el" href="structstate.html#ac24b7cde82b081ecd942a95ffa3a97c1">data</a> </td></tr>
     <tr><td class="paramname">event</td><td>the event passed to the state machine. </td></tr>
+    <tr><td class="paramname">newStateData</td><td>the new state's (the <a class="el" href="structstate.html#ae0f1c24d8a356a7ad778d33ae2ffe6f9">entryState</a> of any (chain of) parent states, not the parent state itself) <a class="el" href="structstate.html#ac24b7cde82b081ecd942a95ffa3a97c1">data</a> </td></tr>
   </table>
   </dd>
 </dl>
@@ -175,7 +177,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </div><div class="memdoc">
 
 <p>Condition that event must fulfil. </p>
-<p>This variable will be passed to <a class="el" href="structtransition.html#aaed7ffe8b4bb6ef95c8189331ec877ce" title="Check if data passed with event fulfils a condition.">guard</a> (if <a class="el" href="structtransition.html#aaed7ffe8b4bb6ef95c8189331ec877ce" title="Check if data passed with event fulfils a condition.">guard</a> is non-NULL) and may be used as a condition that the incoming event's data must fulfil in order for the transition to be performed. By using this variable, the number of <a class="el" href="structtransition.html#aaed7ffe8b4bb6ef95c8189331ec877ce" title="Check if data passed with event fulfils a condition.">guard</a> functions can be minimized by making them more general. </p>
+<p>This variable will be passed to the <a class="el" href="structtransition.html#aaed7ffe8b4bb6ef95c8189331ec877ce" title="Check if data passed with event fulfils a condition.">guard</a> (if <a class="el" href="structtransition.html#aaed7ffe8b4bb6ef95c8189331ec877ce" title="Check if data passed with event fulfils a condition.">guard</a> is non-NULL) and may be used as a condition that the incoming event's data must fulfil in order for the transition to be performed. By using this variable, the number of <a class="el" href="structtransition.html#aaed7ffe8b4bb6ef95c8189331ec877ce" title="Check if data passed with event fulfils a condition.">guard</a> functions can be minimised by making them more general. </p>
 
 </div>
 </div>
@@ -190,7 +192,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </div><div class="memdoc">
 
 <p>Check if data passed with event fulfils a condition. </p>
-<p>A transition may be conditional. If so, this function, if non-NULL, will be called. Its first argument will be supplied with <a class="el" href="structtransition.html#a132bff3e61c2709562ea586a18602176" title="Condition that event must fulfil.">condition</a>, which can be compared againts <a class="el" href="group__stateMachine.html#structevent" title="Event.">event</a>. The user may choose to use this argument or not. Only if the result is true, the transition will take place.</p>
+<p>A transition may be conditional. If so, this function, if non-NULL, will be called. Its first argument will be supplied with <a class="el" href="structtransition.html#a132bff3e61c2709562ea586a18602176" title="Condition that event must fulfil.">condition</a>, which can be compared against the <a class="el" href="group__stateMachine.html#a675355462c32d49a652673799ca24209">payload</a> in the <a class="el" href="group__stateMachine.html#structevent" title="Event.">event</a>. The user may choose to use this argument or not. Only if the result is true, the transition will take place.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">condition</td><td>event (data) to compare the incoming event against. </td></tr>
@@ -198,13 +200,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
   </table>
   </dd>
 </dl>
-<dl class="retval"><dt>Return values</dt><dd>
-  <table class="retval">
-    <tr><td class="paramname">true</td><td>if the event's data fulfils the condition, otherwise false. </td></tr>
-  </table>
-  </dd>
+<dl class="section return"><dt>Returns</dt><dd>true if the event's data fulfils the condition, otherwise false. </dd></dl>
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="nestedTest_8c-example.html#a6">nestedTest.c</a>.</dd>
 </dl>
-
 </div>
 </div>
 <a class="anchor" id="a2c3a9da2fdb1b043a0dc33bdde4d41b4"></a>
@@ -218,7 +216,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </div><div class="memdoc">
 
 <p>The next state. </p>
-<p>This must point to the next state that will be entered. It cannot be NULL, but if it is, the state machine will detect it and enter the <a class="el" href="group__stateMachine.html#ad0a1bba7cbe1a7b7a8a574ebdb9fe885">error state</a>. </p>
+<p>This must point to the next state that will be entered. It cannot be NULL. If it is, the state machine will detect it and enter the <a class="el" href="group__stateMachine.html#ad0a1bba7cbe1a7b7a8a574ebdb9fe885">error state</a>. </p>
 
 </div>
 </div>
@@ -228,7 +226,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 9 2013 23:52:55 for State machine by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 17 2013 14:01:33 for State machine by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
