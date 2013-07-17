@@ -60,6 +60,8 @@
  * \file
  * \example stateMachineExample.c Simple example of how to create a state
  * machine
+ * \example nestedTest.c Simple example testing the behaviour of nested
+ * parent states
  */
 
 #ifndef STATEMACHINE_H
