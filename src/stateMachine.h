@@ -23,7 +23,7 @@
 /**
  * \mainpage %stateMachine
  *
- * %stateMachine is a feature-rich, yet simple, finite state machine
+ * %stateMachine is a feature-rich, yet simple finite state machine
  * implementation. It supports grouped states, guarded transitions, events
  * with payload, entry and exit actions, transition actions and access to
  * user-defined state data from all actions.
@@ -46,11 +46,11 @@
  *
  * \brief Finite state machine
  *
- * A finite state machine implementation that supports nested states, guard
- * conditions and entry/exit routines. No static variables are used, making it
- * possible to run numerous instances of the state machine. No heap allocation
- * is performed; all data is given as pointers to the module and can be stored
- * either on the stack or the heap.
+ * A finite state machine implementation that supports nested states, guards
+ * and entry/exit routines. All state machine data is stored in separate
+ * objects, and the state machine must be built by the user. States are
+ * connected using pointers, and all data can be stored on either the stack,
+ * heap or both.
  */
 
 /**
@@ -74,8 +74,8 @@
  * \brief Event
  *
  * Events trigger transitions from a state to another. Event types are defined
- * by the user. Any event may optionally contain a payload (\ref 
- * #event::data "data").
+ * by the user. Any event may optionally contain a \ref #event::data
+ * "payload".
  *
  * \sa state
  * \sa transition
@@ -88,8 +88,8 @@ struct event
     * \brief Event payload.
     *
     * How this is used is entirely up to the user. This data
-    * is always passed together with an eventType in order to make it possible
-    * to always cast the data correctly.
+    * is always passed together with #type in order to make it possible to
+    * always cast the data correctly.
     */
    void *data;
 };
@@ -104,14 +104,15 @@ struct state;
  * a state has more than one transition with the same type of event (and the
  * same condition), the first transition in the array will be run. An
  * unconditional transition placed last in the transition array of a state can
- * act as a "catch-all" if the event is not let through by guards. A
- * transition may optionally run an #action, which will have the triggering
- * event passed to it as an argument, along with the state \ref state::data
- * "data".
+ * act as a "catch-all". A transition may optionally run an #action, which
+ * will have the triggering event passed to it as an argument, along with the
+ * current and new states' \ref state::data "data".
  *
  * It is perfectly valid for a transition to return to the state it belongs
  * to. Such a transition will not call the state's \ref state::entryAction
- * "entryAction" or \ref state::exitAction "exitAction".
+ * "entry action" or \ref state::exitAction "exit action". If there are no
+ * transitions for the current event, the state's parent will be handed the
+ * event.
  *
  * ### Examples ###
  * - An ungarded transition to a state with no action performed:
@@ -139,12 +140,13 @@ struct state;
  * {
  *    .eventType = Event_mouse,
  *    .condition = boxLimits,
- *    .guard = &coordinateWithinLimits,
+ *    .guard = &coordinatesWithinLimits,
+ * },
  * ~~~
  * By using \ref #condition "conditions" a more general guard function can be
  * used, operating on the supplied argument #condition. In this example,
- * `coordinateWithinLimits` checks whether the coordinate in the mouse event
- * is within the limits of the "box".
+ * `coordinatesWithinLimits` checks whether the coordinates in the mouse event
+ * are within the limits of the "box".
  *
  * \sa event
  * \sa state
@@ -156,10 +158,10 @@ struct transition
    /**
     * \brief Condition that event must fulfil
     *
-    * This variable will be passed to #guard (if #guard is non-NULL) and may
-    * be used as a condition that the incoming event's data must fulfil in
+    * This variable will be passed to the #guard (if #guard is non-NULL) and
+    * may be used as a condition that the incoming event's data must fulfil in
     * order for the transition to be performed. By using this variable, the
-    * number of #guard functions can be minimized by making them more general.
+    * number of #guard functions can be minimised by making them more general.
     */
    void *condition;
    /**
@@ -167,13 +169,14 @@ struct transition
     *
     * A transition may be conditional. If so, this function, if non-NULL, will
     * be called. Its first argument will be supplied with #condition, which
-    * can be compared againts #event. The user may choose to use this argument
-    * or not. Only if the result is true, the transition will take place.
+    * can be compared against the \ref event::data "payload" in the #event.
+    * The user may choose to use this argument or not. Only if the result is
+    * true, the transition will take place.
     *
     * \param condition event (data) to compare the incoming event against.
     * \param event the event passed to the state machine.
     *
-    * \retval true if the event's data fulfils the condition, otherwise false.
+    * \returns true if the event's data fulfils the condition, otherwise false.
     */
    bool ( *guard )( void *condition, struct event *event );
    /** 
@@ -194,7 +197,7 @@ struct transition
     * \brief The next state
     *
     * This must point to the next state that will be entered. It cannot be
-    * NULL, but if it is, the state machine will detect it and enter the \ref
+    * NULL. If it is, the state machine will detect it and enter the \ref
     * stateMachine::errorState "error state".
     */
    struct state *nextState;
@@ -204,11 +207,12 @@ struct transition
  * \brief State
  *
  * The current state in a state machine moves to a new state when one of the
- * #transitions in the current state acts on an event. An optional \ref
+ * #transitions in the current state triggers on an event. An optional \ref
  * #exitAction "exit action" is called when the state is left, and an \ref
  * #entryAction "entry action" is called when the state machine enters a new
  * state. If a state returns to itself, neither #exitAction nor #entryAction
- * will be called.
+ * will be called. An optional \ref transition::action "transition action" is
+ * called in either case.
  *
  * States may be organised in a hierarchy by setting \ref #parentState
  * "parent states". When a group/parent state is entered, the state machine is
@@ -237,14 +241,14 @@ struct transition
  *    .exitAction = &cleanUp,
  * };
  * ~~~
- * In this example, `normalState` is a childe of `groupState`, but the
+ * In this example, `normalState` is a child of `groupState`, but the
  * #parentState value may also be NULL to indicate that it is not a child of
  * any group state.
  *
  * ### Group/parent state ###
  * A state becomes a group/parent state when it is linked to by child states
  * by using #parentState. No members in the group state need to be set in a
- * particular way.
+ * particular way. A parent state may also have a parent.
  * ~~~{.c}
  * struct state groupState = {
  *    .entryState = &normalState,
@@ -296,7 +300,7 @@ struct state
     */
    struct transition *transitions;
    /** 
-    * \brief Number of transitions in the array.
+    * \brief Number of transitions in the #transitions array.
     */
    size_t numTransitions;
    /**
@@ -311,13 +315,16 @@ struct state
     * \note If a state returns to itself through a transition (either directly
     * or through a parent/group sate), its #entryAction will not be called.
     *
+    * \note A group/parent state with its #entryState defined will not have
+    * its #entryAction called.
+    *
     * \param stateData the state's #data will be passed.
-    * \param event the event that triggered a transition will be passed.
+    * \param event the event that triggered the transition will be passed.
     */
    void ( *entryAction )( void *stateData, struct event *event );
    /**
     * \brief This function is called whenever the state is being left. May be
-    * NULL
+    * NULL.
     *
     * \note If a state returns to itself through a transition (either directly
     * or through a parent/group sate), its #exitAction will not be called.
@@ -331,7 +338,7 @@ struct state
 /**
  * \brief State machine
  *
- * Should not be manipulated directly by user.
+ * There is no need to manipulate the members directly.
  */
 struct stateMachine
 {
@@ -345,8 +352,11 @@ struct stateMachine
     */
    struct state *previousState;
    /** 
-    * \brief Pointer to the state which will be entered whenever an error
-    * occurs in the state machine.
+    * \brief Pointer to a state that will be entered whenever an error occurs
+    * in the state machine.
+    *
+    * See #stateM_errorStateReached for when the state machine enters the
+    * error state.
     */
    struct state *errorState;
 };
@@ -362,11 +372,15 @@ struct stateMachine
  *
  * \note The \ref #state::entryAction "entry action" for \pn{initialState}
  * will not be called.
+ * 
+ * \note If \pn{initialState} is a parent state with its \ref
+ * state::entryState "entryState" defined, it will not be entered. The user
+ * must explicitly set the initial state.
  *
- * \param stateMachine the state machine to initalise.
+ * \param stateMachine the state machine to initialise.
  * \param initialState the initial state of the state machine.
- * \param errorState pointer to a state that acts a final state and notifys
- * the system/user that an eror has occurred.
+ * \param errorState pointer to a state that acts a final state and notifies
+ * the system/user that an error has occurred.
  */
 void stateM_init( struct stateMachine *stateMachine,
       struct state *initialState, struct state *errorState );
@@ -378,19 +392,31 @@ enum stateM_handleEventRetVals
 {
    /** \brief Erroneous arguments were passed */
    stateM_errArg = -2,
-   /** \brief The error state was reached
+   /**
+    * \brief The error state was reached
+    *
+    * This value is returned either when the state machine enters the error
+    * state itself as a result of an error, or when the error state is the
+    * next state as a result of a successful transition.
     *
     * The state machine enters the state machine if any of the following
-    * happends:
+    * happens:
     * - The current state is NULL
     * - A transition for the current event did not define the next state
     */
    stateM_errorStateReached,
    /** \brief The current state changed into a non-final state */
    stateM_stateChanged,
-   /** \brief The state changed back to itself */
+   /**
+    * \brief The state changed back to itself
+    *
+    * The state can return to itself either directly or indirectly. An
+    * indirect path may inlude a transition from a parent state and the use of
+    * \ref state::entryState "entryStates".
+    */
    stateM_stateLoopSelf,
-   /** \brief The current state did not change on the given event
+   /**
+    * \brief The current state did not change on the given event
     *
     * If any event passed to the state machine should result in a state
     * change, this return value should be considered as an error.
@@ -423,7 +449,7 @@ int stateM_handleEvent( struct stateMachine *stateMachine,
       struct event *event );
 
 /**
- * \brief The current state
+ * \brief Get the current state
  *
  * \param stateMachine the state machine to get the current state from.
  *
@@ -433,7 +459,7 @@ int stateM_handleEvent( struct stateMachine *stateMachine,
 struct state *stateM_currentState( struct stateMachine *stateMachine );
 
 /**
- * \brief The previous state
+ * \brief Get the previous state
  *
  * \param stateMachine the state machine to get the previous state from.
  *
