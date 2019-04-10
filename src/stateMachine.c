@@ -50,7 +50,8 @@ int stateM_handleEvent( struct stateMachine *fsm,
       return stateM_errorStateReached;
    }
 
-   if ( !fsm->currentState->numTransitions )
+   if ( !fsm->currentState->numTransitions && (!fsm->currentState->parentState ||
+	   		   (fsm->currentState->parentState && !fsm->currentState->parentState->numTransitions)) )
       return stateM_noStateChange;
 
    struct state *nextState = fsm->currentState;
