@@ -82,7 +82,7 @@ int stateM_handleEvent( struct stateMachine *fsm,
       while ( nextState->entryState )
          nextState = nextState->entryState;
 
-	  /* Run exit actions only if the current state is left (only if it does
+      /* Run exit actions only if the current state is left (only if it does
        * not return to itself): */
       if(nextState != fsm->currentState)
       {
@@ -94,7 +94,7 @@ int stateM_handleEvent( struct stateMachine *fsm,
 		   * state */
 		  if ( fsm->currentState->parentState && fsm->currentState->parentState->entryAction &&
 			  (nextState->parentState != fsm->currentState->parentState) )
-			  fsm->currentState->parentState->exitAction( nextState->data, event );
+			  fsm->currentState->parentState->exitAction( fsm->currentState->parentState->data, event );
       }
 
       /* Run transition action (if any): */
@@ -102,8 +102,8 @@ int stateM_handleEvent( struct stateMachine *fsm,
          transition->action( fsm->currentState->data, event, nextState->
                data );
 
-	  /* Call the new state's entry actions if it has any (only if state does
-	   * not return to itself): */
+      /* Call the new state's entry actions if it has any (only if state does
+       * not return to itself): */
       if(nextState != fsm->currentState)
       {
 		  /* Call the new state's parent state entry action if it has one
@@ -111,7 +111,7 @@ int stateM_handleEvent( struct stateMachine *fsm,
 		   * state */
 		  if ( nextState->parentState && nextState->parentState->entryAction &&
 			  (nextState->parentState != fsm->currentState->parentState) )
-			 nextState->parentState->entryAction( nextState->data, event );
+			 nextState->parentState->entryAction( nextState->parentState->data, event );
 
 		  if ( nextState->entryAction )
 			 nextState->entryAction( nextState->data, event );
